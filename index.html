@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitCoach Client Intake Form</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --muted: #64748b;
+      --success: #16a34a;
+      --error: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .header .logo {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    .header p {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    .progress-bar {
+      background: var(--border);
+      border-radius: 999px;
+      height: 6px;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+      color: var(--text);
+    }
+    label .required {
+      color: var(--error);
+      margin-left: 3px;
+    }
+    label .hint {
+      font-weight: 400;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-left: 4px;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--bg);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+    textarea { resize: vertical; min-height: 90px; }
+    .radio-group, .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .radio-group label, .checkbox-group label {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      font-weight: 400;
+      cursor: pointer;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .radio-group label:hover, .checkbox-group label:hover {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+    .radio-group input, .checkbox-group input {
+      width: auto;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 540px) { .grid-2 { grid-template-columns: 1fr; } }
+    .scale-row {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .scale-row label {
+      flex: 1;
+      min-width: 36px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 400;
+      padding: 0.5rem 0.25rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 0.88rem;
+      transition: all 0.2s;
+    }
+    .scale-row label:hover { border-color: var(--primary); background: #eff6ff; }
+    .scale-row input[type="radio"] { display: none; }
+    .scale-row input:checked + span { color: var(--primary); font-weight: 700; }
+    .scale-row label:has(input:checked) { background: var(--primary); color: white; border-color: var(--primary); }
+    .submit-btn {
+      width: 100%;
+      padding: 1rem 2rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 0.5rem;
+    }
+    .submit-btn:hover { background: var(--primary-dark); }
+    .submit-btn:active { transform: scale(0.99); }
+    .submit-btn:disabled { background: var(--muted); cursor: not-allowed; }
+    .success-msg {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .success-msg .checkmark { font-size: 3rem; margin-bottom: 1rem; }
+    .success-msg h2 { font-size: 1.5rem; color: var(--success); margin-bottom: 0.75rem; }
+    .success-msg p { color: var(--muted); }
+    .parq-note {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.875rem;
+      color: #92400e;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">🏋️</div>
+      <h1>FitCoach Intake Form</h1>
+      <p>Complete this form so your coach can build your personalized program. Takes about 10 minutes.</p>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+    <form id="intakeForm" action="https://formspree.io/f/xyzpqrst" method="POST">
+      <!-- Hidden fields for identification -->
+      <input type="hidden" name="_subject" value="FitCoach Intake Form - New Submission" />
+      <input type="hidden" name="_next" value="#" />
+
+      <!-- SECTION 1: Personal Information -->
+      <div class="card">
+        <div class="section-title">👤 Section 1: Personal Information</div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Full Name <span class="required">*</span></label>
+            <input type="text" name="full_name" required placeholder="Your full name" />
+          </div>
+          <div class="form-group">
+            <label>Date of Birth <span class="required">*</span></label>
+            <input type="text" name="dob" required placeholder="MM/DD/YYYY" />
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Email Address <span class="required">*</span></label>
+            <input type="email" name="email" required placeholder="your@email.com" />
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" name="phone" placeholder="(555) 000-0000" />
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Location / Time Zone</label>
+            <input type="text" name="location" placeholder="e.g. San Francisco, CA — Pacific" />
+          </div>
+          <div class="form-group">
+            <label>Biological Sex</label>
+            <select name="sex">
+              <option value="">Select...</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Prefer not to say</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Height</label>
+            <input type="text" name="height" placeholder="e.g. 5'10&quot; or 178 cm" />
+          </div>
+          <div class="form-group">
+            <label>Current Weight</label>
+            <input type="text" name="weight" placeholder="e.g. 175 lbs or 79 kg" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Hevy App Username <span class="hint">(if you use Hevy for tracking)</span></label>
+          <input type="text" name="hevy_username" placeholder="e.g. amitpatel_lifts" />
+        </div>
+      </div>
+
+      <!-- SECTION 2: Fitness Goals -->
+      <div class="card">
+        <div class="section-title">🎯 Section 2: Fitness Goals</div>
+        <div class="form-group">
+          <label>What is your primary fitness goal? <span class="required">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="primary_goal" value="Build muscle / hypertrophy" required /><span>Build muscle / hypertrophy</span></label>
+            <label><input type="radio" name="primary_goal" value="Lose body fat" /><span>Lose body fat</span></label>
+            <label><input type="radio" name="primary_goal" value="Body recomposition (muscle gain + fat loss)" /><span>Body recomposition (muscle gain + fat loss)</span></label>
+            <label><input type="radio" name="primary_goal" value="Improve strength / performance" /><span>Improve strength / performance</span></label>
+            <label><input type="radio" name="primary_goal" value="General health and fitness" /><span>General health and fitness</span></label>
+            <label><input type="radio" name="primary_goal" value="Other" /><span>Other</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>What does your ideal body / fitness outcome look like? <span class="required">*</span></label>
+          <textarea name="ideal_outcome" required placeholder="Describe in your own words — e.g. lean and athletic, strong but not bulky, etc."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Any specific performance goals? <span class="hint">(e.g. lift X lbs, run 5K, compete)</span></label>
+          <textarea name="performance_goals" placeholder="Optional"></textarea>
+        </div>
+        <div class="form-group">
+          <label>What is your target timeframe for seeing results?</label>
+          <select name="timeframe">
+            <option value="">Select...</option>
+            <option>3 months</option>
+            <option>6 months</option>
+            <option>12 months</option>
+            <option>Long-term lifestyle change (no fixed deadline)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- SECTION 3: Medical History / PAR-Q -->
+      <div class="card">
+        <div class="section-title">🏥 Section 3: Medical History &amp; PAR-Q</div>
+        <div class="parq-note">
+          ⚠️ <strong>PAR-Q Notice:</strong> The following questions help determine if you should consult a physician before starting an exercise program. Answer honestly — your safety is the priority.
+        </div>
+        <div class="form-group">
+          <label>Has a doctor ever told you that you have a heart condition? <span class="required">*</span></label>
+          <div class="radio-group" style="flex-direction:row;gap:0.75rem;">
+            <label><input type="radio" name="parq_heart" value="Yes" required /><span>Yes</span></label>
+            <label><input type="radio" name="parq_heart" value="No" /><span>No</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Do you feel chest pain when doing physical activity? <span class="required">*</span></label>
+          <div class="radio-group" style="flex-direction:row;gap:0.75rem;">
+            <label><input type="radio" name="parq_chest" value="Yes" required /><span>Yes</span></label>
+            <label><input type="radio" name="parq_chest" value="No" /><span>No</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Do you feel faint, dizzy, or lose balance due to exercise? <span class="required">*</span></label>
+          <div class="radio-group" style="flex-direction:row;gap:0.75rem;">
+            <label><input type="radio" name="parq_dizzy" value="Yes" required /><span>Yes</span></label>
+            <label><input type="radio" name="parq_dizzy" value="No" /><span>No</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Do you have a bone or joint problem that could be aggravated by exercise? <span class="required">*</span></label>
+          <div class="radio-group" style="flex-direction:row;gap:0.75rem;">
+            <label><input type="radio" name="parq_joint" value="Yes" required /><span>Yes</span></label>
+            <label><input type="radio" name="parq_joint" value="No" /><span>No</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Are you currently on medication for blood pressure or heart condition? <span class="required">*</span></label>
+          <div class="radio-group" style="flex-direction:row;gap:0.75rem;">
+            <label><input type="radio" name="parq_meds" value="Yes" required /><span>Yes</span></label>
+            <label><input type="radio" name="parq_meds" value="No" /><span>No</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Do you know of any other reason you should not do physical activity? <span class="required">*</span></label>
+          <div class="radio-group" style="flex-direction:row;gap:0.75rem;">
+            <label><input type="radio" name="parq_other" value="Yes" required /><span>Yes</span></label>
+            <label><input type="radio" name="parq_other" value="No" /><span>No</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Any injuries, surgeries, or chronic conditions we should know about?</label>
+          <textarea name="injuries" placeholder="e.g. previous lower back injury, knee surgery, etc. Or write 'None'"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Any medications or supplements you currently take?</label>
+          <textarea name="medications" placeholder="Optional — list any medications or supplements"></textarea>
+        </div>
+      </div>
+
+      <!-- SECTION 4: Current Fitness Level -->
+      <div class="card">
+        <div class="section-title">💪 Section 4: Current Fitness Level</div>
+        <div class="form-group">
+          <label>How would you describe your current fitness level? <span class="required">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="fitness_level" value="Beginner (little to no structured training)" required /><span>Beginner (little to no structured training)</span></label>
+            <label><input type="radio" name="fitness_level" value="Intermediate (6+ months consistent training)" /><span>Intermediate (6+ months consistent training)</span></label>
+            <label><input type="radio" name="fitness_level" value="Advanced (2+ years structured training)" /><span>Advanced (2+ years structured training)</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>How many years have you been training?</label>
+          <input type="text" name="training_years" placeholder="e.g. 2 years, 6 months, just starting" />
+        </div>
+        <div class="form-group">
+          <label>How many days per week do you currently train?</label>
+          <select name="current_days">
+            <option value="">Select...</option>
+            <option>0 (not currently training)</option>
+            <option>1-2 days</option>
+            <option>3-4 days</option>
+            <option>5-6 days</option>
+            <option>7 days</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>What types of training do you currently do?</label>
+          <div class="checkbox-group">
+            <label><input type="checkbox" name="training_types" value="Weight training / resistance" /><span>Weight training / resistance</span></label>
+            <label><input type="checkbox" name="training_types" value="Cardio (running, cycling, etc.)" /><span>Cardio (running, cycling, etc.)</span></label>
+            <label><input type="checkbox" name="training_types" value="HIIT / circuit training" /><span>HIIT / circuit training</span></label>
+            <label><input type="checkbox" name="training_types" value="Sports / recreational activity" /><span>Sports / recreational activity</span></label>
+            <label><input type="checkbox" name="training_types" value="Yoga / mobility / flexibility" /><span>Yoga / mobility / flexibility</span></label>
+            <label><input type="checkbox" name="training_types" value="None currently" /><span>None currently</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Approximate current lifts (if known) <span class="hint">(1-rep max or working weight)</span></label>
+          <div class="grid-2">
+            <input type="text" name="squat" placeholder="Squat: e.g. 185 lbs" />
+            <input type="text" name="deadlift" placeholder="Deadlift: e.g. 225 lbs" />
+            <input type="text" name="bench" placeholder="Bench Press: e.g. 135 lbs" />
+            <input type="text" name="ohp" placeholder="Overhead Press: e.g. 95 lbs" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Rate your energy levels on a typical day <span class="required">*</span></label>
+          <div class="scale-row">
+            <label><input type="radio" name="energy_level" value="1" required /><span>1<br/><small>Very low</small></span></label>
+            <label><input type="radio" name="energy_level" value="2" /><span>2</span></label>
+            <label><input type="radio" name="energy_level" value="3" /><span>3</span></label>
+            <label><input type="radio" name="energy_level" value="4" /><span>4</span></label>
+            <label><input type="radio" name="energy_level" value="5" /><span>5<br/><small>Average</small></span></label>
+            <label><input type="radio" name="energy_level" value="6" /><span>6</span></label>
+            <label><input type="radio" name="energy_level" value="7" /><span>7</span></label>
+            <label><input type="radio" name="energy_level" value="8" /><span>8</span></label>
+            <label><input type="radio" name="energy_level" value="9" /><span>9</span></label>
+            <label><input type="radio" name="energy_level" value="10" /><span>10<br/><small>Very high</small></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 5: Hevy App History -->
+      <div class="card">
+        <div class="section-title">📱 Section 5: Hevy App &amp; Workout History</div>
+        <div class="form-group">
+          <label>Do you use the Hevy App for workout tracking?</label>
+          <div class="radio-group" style="flex-direction:row;gap:0.75rem;">
+            <label><input type="radio" name="uses_hevy" value="Yes" /><span>Yes</span></label>
+            <label><input type="radio" name="uses_hevy" value="No" /><span>No</span></label>
+            <label><input type="radio" name="uses_hevy" value="Just started" /><span>Just started</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>How long have you been using Hevy?</label>
+          <input type="text" name="hevy_duration" placeholder="e.g. 6 months, 2 years, etc." />
+        </div>
+        <div class="form-group">
+          <label>What routine or program are you currently following in Hevy? <span class="hint">(if any)</span></label>
+          <textarea name="hevy_routine" placeholder="Describe your current split or program, or paste your routine name"></textarea>
+        </div>
+        <div class="form-group">
+          <label>How consistent have you been with logging workouts?</label>
+          <div class="radio-group">
+            <label><input type="radio" name="hevy_consistency" value="Very consistent (80%+ of workouts logged)" /><span>Very consistent (80%+ of workouts logged)</span></label>
+            <label><input type="radio" name="hevy_consistency" value="Somewhat consistent (50-80%)" /><span>Somewhat consistent (50–80%)</span></label>
+            <label><input type="radio" name="hevy_consistency" value="Inconsistent (less than 50%)" /><span>Inconsistent (less than 50%)</span></label>
+            <label><input type="radio" name="hevy_consistency" value="Just started using Hevy" /><span>Just started using Hevy</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Anything notable about your training history you'd like your coach to know?</label>
+          <textarea name="training_notes" placeholder="e.g. previous programs, injuries that changed your training, big PRs, etc."></textarea>
+        </div>
+      </div>
+
+      <!-- SECTION 6: Nutrition -->
+      <div class="card">
+        <div class="section-title">🥗 Section 6: Nutrition</div>
+        <div class="form-group">
+          <label>How would you describe your current diet? <span class="required">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="diet_type" value="No specific diet — eating whatever" required /><span>No specific diet — eating whatever</span></label>
+            <label><input type="radio" name="diet_type" value="Tracking macros / calories" /><span>Tracking macros / calories</span></label>
+            <label><input type="radio" name="diet_type" value="High protein focus" /><span>High protein focus</span></label>
+            <label><input type="radio" name="diet_type" value="Intermittent fasting" /><span>Intermittent fasting</span></label>
+            <label><input type="radio" name="diet_type" value="Vegetarian / Vegan" /><span>Vegetarian / Vegan</span></label>
+            <label><input type="radio" name="diet_type" value="Keto / Low carb" /><span>Keto / Low carb</span></label>
+            <label><input type="radio" name="diet_type" value="Other" /><span>Other</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>How many meals do you eat per day on average?</label>
+          <select name="meals_per_day">
+            <option value="">Select...</option>
+            <option>1-2 meals</option>
+            <option>3 meals</option>
+            <option>4-5 meals</option>
+            <option>6+ meals / grazing</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Do you currently track calories or macros?</label>
+          <div class="radio-group" style="flex-direction:row;gap:0.75rem;">
+            <label><input type="radio" name="tracks_macros" value="Yes, consistently" /><span>Yes, consistently</span></label>
+            <label><input type="radio" name="tracks_macros" value="Sometimes" /><span>Sometimes</span></label>
+            <label><input type="radio" name="tracks_macros" value="No" /><span>No</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Approximate daily protein intake <span class="hint">(if you know it)</span></label>
+          <input type="text" name="protein_intake" placeholder="e.g. ~150g, don't know, etc." />
+        </div>
+        <div class="form-group">
+          <label>Any dietary restrictions, allergies, or foods you avoid?</label>
+          <textarea name="dietary_restrictions" placeholder="e.g. dairy-free, nut allergy, no gluten, etc. Or write 'None'"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Rate the quality of your current nutrition <span class="required">*</span></label>
+          <div class="scale-row">
+            <label><input type="radio" name="nutrition_quality" value="1" required /><span>1<br/><small>Very poor</small></span></label>
+            <label><input type="radio" name="nutrition_quality" value="2" /><span>2</span></label>
+            <label><input type="radio" name="nutrition_quality" value="3" /><span>3</span></label>
+            <label><input type="radio" name="nutrition_quality" value="4" /><span>4</span></label>
+            <label><input type="radio" name="nutrition_quality" value="5" /><span>5<br/><small>Average</small></span></label>
+            <label><input type="radio" name="nutrition_quality" value="6" /><span>6</span></label>
+            <label><input type="radio" name="nutrition_quality" value="7" /><span>7</span></label>
+            <label><input type="radio" name="nutrition_quality" value="8" /><span>8</span></label>
+            <label><input type="radio" name="nutrition_quality" value="9" /><span>9</span></label>
+            <label><input type="radio" name="nutrition_quality" value="10" /><span>10<br/><small>Excellent</small></span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Are you open to nutrition coaching / guidance?</label>
+          <div class="radio-group" style="flex-direction:row;gap:0.75rem;">
+            <label><input type="radio" name="nutrition_coaching" value="Yes, definitely" /><span>Yes, definitely</span></label>
+            <label><input type="radio" name="nutrition_coaching" value="Yes, but keep it simple" /><span>Yes, but keep it simple</span></label>
+            <label><input type="radio" name="nutrition_coaching" value="Prefer to focus on training only" /><span>Prefer to focus on training only</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 7: Schedule & Equipment -->
+      <div class="card">
+        <div class="section-title">🗓️ Section 7: Schedule &amp; Equipment</div>
+        <div class="form-group">
+          <label>How many days per week can you commit to training? <span class="required">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="training_days" value="2 days" required /><span>2 days</span></label>
+            <label><input type="radio" name="training_days" value="3 days" /><span>3 days</span></label>
+            <label><input type="radio" name="training_days" value="4 days" /><span>4 days</span></label>
+            <label><input type="radio" name="training_days" value="5 days" /><span>5 days</span></label>
+            <label><input type="radio" name="training_days" value="6 days" /><span>6 days</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Preferred training days <span class="hint">(check all that apply)</span></label>
+          <div class="checkbox-group">
+            <label><input type="checkbox" name="preferred_days" value="Monday" /><span>Monday</span></label>
+            <label><input type="checkbox" name="preferred_days" value="Tuesday" /><span>Tuesday</span></label>
+            <label><input type="checkbox" name="preferred_days" value="Wednesday" /><span>Wednesday</span></label>
+            <label><input type="checkbox" name="preferred_days" value="Thursday" /><span>Thursday</span></label>
+            <label><input type="checkbox" name="preferred_days" value="Friday" /><span>Friday</span></label>
+            <label><input type="checkbox" name="preferred_days" value="Saturday" /><span>Saturday</span></label>
+            <label><input type="checkbox" name="preferred_days" value="Sunday" /><span>Sunday</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Preferred training time</label>
+          <div class="radio-group">
+            <label><input type="radio" name="training_time" value="Morning (before 9am)" /><span>Morning (before 9am)</span></label>
+            <label><input type="radio" name="training_time" value="Midday (9am-12pm)" /><span>Midday (9am–12pm)</span></label>
+            <label><input type="radio" name="training_time" value="Afternoon (12pm-5pm)" /><span>Afternoon (12pm–5pm)</span></label>
+            <label><input type="radio" name="training_time" value="Evening (5pm+)" /><span>Evening (5pm+)</span></label>
+            <label><input type="radio" name="training_time" value="Flexible / varies" /><span>Flexible / varies</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>How long can you train per session? <span class="required">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="session_length" value="30-45 minutes" required /><span>30–45 minutes</span></label>
+            <label><input type="radio" name="session_length" value="45-60 minutes" /><span>45–60 minutes</span></label>
+            <label><input type="radio" name="session_length" value="60-90 minutes" /><span>60–90 minutes</span></label>
+            <label><input type="radio" name="session_length" value="90+ minutes" /><span>90+ minutes</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Where do you primarily train? <span class="required">*</span></label>
+          <div class="radio-group">
+            <label><input type="radio" name="gym_type" value="Commercial gym (full equipment)" required /><span>Commercial gym (full equipment)</span></label>
+            <label><input type="radio" name="gym_type" value="Home gym (good equipment)" /><span>Home gym (good equipment)</span></label>
+            <label><input type="radio" name="gym_type" value="Home (minimal equipment / dumbbells)" /><span>Home (minimal equipment / dumbbells only)</span></label>
+            <label><input type="radio" name="gym_type" value="Outdoor / bodyweight" /><span>Outdoor / bodyweight</span></label>
+            <label><input type="radio" name="gym_type" value="Mix of gym and home" /><span>Mix of gym and home</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>What equipment do you have access to? <span class="hint">(check all that apply)</span></label>
+          <div class="checkbox-group">
+            <label><input type="checkbox" name="equipment" value="Barbell + plates" /><span>Barbell + plates</span></label>
+            <label><input type="checkbox" name="equipment" value="Dumbbells" /><span>Dumbbells</span></label>
+            <label><input type="checkbox" name="equipment" value="Squat rack / power rack" /><span>Squat rack / power rack</span></label>
+            <label><input type="checkbox" name="equipment" value="Cable machines" /><span>Cable machines</span></label>
+            <label><input type="checkbox" name="equipment" value="Machines (leg press, chest press, etc.)" /><span>Machines (leg press, chest press, etc.)</span></label>
+            <label><input type="checkbox" name="equipment" value="Pull-up bar" /><span>Pull-up bar</span></label>
+            <label><input type="checkbox" name="equipment" value="Resistance bands" /><span>Resistance bands</span></label>
+            <label><input type="checkbox" name="equipment" value="Cardio machines (treadmill, bike, etc.)" /><span>Cardio machines (treadmill, bike, etc.)</span></label>
+            <label><input type="checkbox" name="equipment" value="Kettlebells" /><span>Kettlebells</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 8: Lifestyle -->
+      <div class="card">
+        <div class="section-title">🌙 Section 8: Lifestyle</div>
+        <div class="form-group">
+          <label>What is your occupation / daily activity level?</label>
+          <div class="radio-group">
+            <label><input type="radio" name="occupation_activity" value="Sedentary (desk job, mostly sitting)" /><span>Sedentary (desk job, mostly sitting)</span></label>
+            <label><input type="radio" name="occupation_activity" value="Lightly active (some walking, on feet occasionally)" /><span>Lightly active (some walking, on feet occasionally)</span></label>
+            <label><input type="radio" name="occupation_activity" value="Moderately active (on feet often, physical job)" /><span>Moderately active (on feet often, physical job)</span></label>
+            <label><input type="radio" name="occupation_activity" value="Very active (heavy manual labor, lots of movement)" /><span>Very active (heavy manual labor, lots of movement)</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Average hours of sleep per night?</label>
+          <select name="sleep_hours">
+            <option value="">Select...</option>
+            <option>Less than 5 hours</option>
+            <option>5-6 hours</option>
+            <option>6-7 hours</option>
+            <option>7-8 hours</option>
+            <option>8+ hours</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Rate your sleep quality <span class="required">*</span></label>
+          <div class="scale-row">
+            <label><input type="radio" name="sleep_quality" value="1" required /><span>1<br/><small>Very poor</small></span></label>
+            <label><input type="radio" name="sleep_quality" value="2" /><span>2</span></label>
+            <label><input type="radio" name="sleep_quality" value="3" /><span>3</span></label>
+            <label><input type="radio" name="sleep_quality" value="4" /><span>4</span></label>
+            <label><input type="radio" name="sleep_quality" value="5" /><span>5<br/><small>Average</small></span></label>
+            <label><input type="radio" name="sleep_quality" value="6" /><span>6</span></label>
+            <label><input type="radio" name="sleep_quality" value="7" /><span>7</span></label>
+            <label><input type="radio" name="sleep_quality" value="8" /><span>8</span></label>
+            <label><input type="radio" name="sleep_quality" value="9" /><span>9</span></label>
+            <label><input type="radio" name="sleep_quality" value="10" /><span>10<br/><small>Excellent</small></span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Rate your current stress level <span class="required">*</span></label>
+          <div class="scale-row">
+            <label><input type="radio" name="stress_level" value="1" required /><span>1<br/><small>Very low</small></span></label>
+            <label><input type="radio" name="stress_level" value="2" /><span>2</span></label>
+            <label><input type="radio" name="stress_level" value="3" /><span>3</span></label>
+            <label><input type="radio" name="stress_level" value="4" /><span>4</span></label>
+            <label><input type="radio" name="stress_level" value="5" /><span>5<br/><small>Moderate</small></span></label>
+            <label><input type="radio" name="stress_level" value="6" /><span>6</span></label>
+            <label><input type="radio" name="stress_level" value="7" /><span>7</span></label>
+            <label><input type="radio" name="stress_level" value="8" /><span>8</span></label>
+            <label><input type="radio" name="stress_level" value="9" /><span>9</span></label>
+            <label><input type="radio" name="stress_level" value="10" /><span>10<br/><small>Very high</small></span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Do you smoke or use nicotine products?</label>
+          <div class="radio-group" style="flex-direction:row;gap:0.75rem;">
+            <label><input type="radio" name="smoking" value="No" /><span>No</span></label>
+            <label><input type="radio" name="smoking" value="Occasionally" /><span>Occasionally</span></label>
+            <label><input type="radio" name="smoking" value="Yes, regularly" /><span>Yes, regularly</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Alcohol consumption</label>
+          <div class="radio-group">
+            <label><input type="radio" name="alcohol" value="None" /><span>None</span></label>
+            <label><input type="radio" name="alcohol" value="1-2 drinks per week" /><span>1–2 drinks per week</span></label>
+            <label><input type="radio" name="alcohol" value="3-7 drinks per week" /><span>3–7 drinks per week</span></label>
+            <label><input type="radio" name="alcohol" value="8+ drinks per week" /><span>8+ drinks per week</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Is there anything else you'd like your coach to know?</label>
+          <textarea name="additional_notes" placeholder="Any context, concerns, motivations, or anything else relevant to your program..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>How did you hear about FitCoach? <span class="hint">(optional)</span></label>
+          <input type="text" name="referral_source" placeholder="e.g. friend referral, social media, etc." />
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="card">
+        <div class="form-group">
+          <label style="font-weight:400;font-size:0.875rem;">
+            <input type="checkbox" name="consent" value="yes" required style="width:auto;margin-right:8px;" />
+            I confirm the information provided is accurate to the best of my knowledge and I consent to having it used to build my personalized training program. <span class="required">*</span>
+          </label>
+        </div>
+        <button type="submit" class="submit-btn" id="submitBtn">Submit Intake Form →</button>
+      </div>
+    </form>
+
+    <!-- Success Message -->
+    <div class="success-msg" id="successMsg">
+      <div class="checkmark">✅</div>
+      <h2>Form Submitted!</h2>
+      <p>Thank you! Your intake form has been received. Your FitCoach coach will review it and be in touch within 24–48 hours.</p>
+    </div>
+  </div>
+
+  <script>
+    // Progress bar
+    const form = document.getElementById('intakeForm');
+    const fill = document.getElementById('progressFill');
+    function updateProgress() {
+      const required = form.querySelectorAll('[required]');
+      let filled = 0;
+      required.forEach(el => {
+        if (el.type === 'radio' || el.type === 'checkbox') {
+          const name = el.name;
+          if (form.querySelector(`[name="${name}"]:checked`)) filled++;
+        } else if (el.value.trim()) {
+          filled++;
+        }
+      });
+      // Deduplicate radio groups
+      const radioNames = new Set();
+      required.forEach(el => { if (el.type === 'radio') radioNames.add(el.name); });
+      const total = required.length - [...radioNames].reduce((acc, name) => {
+        return acc + form.querySelectorAll(`[name="${name}"][required]`).length - 1;
+      }, 0);
+      fill.style.width = Math.min(100, Math.round((filled / total) * 100)) + '%';
+    }
+    form.addEventListener('change', updateProgress);
+    form.addEventListener('input', updateProgress);
+    updateProgress();
+
+    // Handle Formspree submission via fetch
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+      try {
+        const data = new FormData(form);
+        const resp = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+        if (resp.ok) {
+          form.style.display = 'none';
+          document.getElementById('successMsg').style.display = 'block';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Submit Intake Form →';
+          alert('There was an issue submitting the form. Please try again or contact your coach directly.');
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Submit Intake Form →';
+        alert('Network error. Please check your connection and try again.');
+      }
+    });
+  </script>
+</body>
+</html>
