@@ -219,10 +219,18 @@
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
 
-    <form id="intakeForm" action="https://formspree.io/f/xyzpqrst" method="POST">
+    <!--
+      SETUP: To activate form submissions, replace the action URL below.
+      Option A (no account needed): https://formsubmit.co/YOUR_EMAIL
+        - First submission sends an activation email to YOUR_EMAIL.
+        - Click the activation link, then all future submissions arrive in your inbox.
+      Option B (Formspree): Sign up at formspree.io, create a form, paste the endpoint.
+    -->
+    <form id="intakeForm" action="https://formsubmit.co/YOUR_FITCOACH_EMAIL" method="POST">
       <!-- Hidden fields for identification -->
-      <input type="hidden" name="_subject" value="FitCoach Intake Form - New Submission" />
-      <input type="hidden" name="_next" value="#" />
+      <input type="hidden" name="_subject" value="FitCoach Intake Form - Amit Patel" />
+      <input type="hidden" name="_captcha" value="false" />
+      <input type="hidden" name="_next" value="https://amitcpatel.github.io/fitcoach-intake/?submitted=true" />
 
       <!-- SECTION 1: Personal Information -->
       <div class="card">
